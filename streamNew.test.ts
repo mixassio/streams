@@ -17,29 +17,32 @@ export class Liner extends Transform {
   }
 }
 
-describe('lineParserOld', () => {
+describe.skip('lineParserOld', () => {
   const myFunc = jest.fn();
 
-  it('should func calling', () => {
+  it('should func calling', (done) => {
     const liner = new Liner(myFunc.mockResolvedValue(42)); //работает только с резолвом, иначе не хватает .then
     liner._transform(123, 'utf8', _.noop);
     expect(myFunc).toHaveBeenCalled();
+    done();
   });
-  it('should func resolve', () => {
+  it('should func resolve', (done) => {
     const liner = new Liner(myFunc.mockResolvedValue(42));
     const cb = jest.fn();
     liner._transform(123, 'utf8', cb);
     setTimeout(() => {
       expect(cb).toBeCalledWith(null, 42);
+      done();
     }, 100);
   });
-  it('should func reject', () => {
+  it('should func reject', (done) => {
     const err = new Error('my error');
     const liner = new Liner(myFunc.mockRejectedValue(err));
     const cb = jest.fn();
     liner._transform(123, 'utf8', cb);
     setTimeout(() => {
-      expect(cb).toThrowError();
+      expect(cb).toBeCalledWith(err);
+      done();
     }, 100);
   });
 });

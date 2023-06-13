@@ -27,19 +27,15 @@ export class LineParser extends Transform {
       }
     }
     if (this.bufferLine.length > 0) {
-      if (this.bufferLine.length === 1) {
-        this.push(this.bufferLine[0] + '\n');
-        this.bufferLine.length = 0;
-      } else {
-        this.bufferLine.forEach((el) => this.push(el + '\n'));
-        this.bufferLine.length = 0;
-      }
+      this.bufferLine.forEach((el) => this.push(el + '\n'));
+      this.bufferLine.length = 0;
     }
     callback(null, '');
   }
   _flush(callback: TransformCallback): void {
     if (this.bufferString.length > 0) {
       callback(null, this.bufferString);
+      return;
     }
     callback(null, '');
   }
@@ -65,7 +61,7 @@ export class LineTransformer extends Transform {
   }
 }
 
-export const transformStream2 = new Transform({
+export const logStream = new Transform({
   transform(chunk, encoding, callback): void {
     // console.log(chunk.toString());
     callback(null, chunk.toString());
@@ -85,10 +81,10 @@ const myfunc = (line: string): string => {
 //   .pipe(transformStream2)
 //   .pipe(createWriteStream('data_result.csv'));
 
-pipelinePromise(
-  createReadStream('data1.csv', { highWaterMark: 100 }),
-  new LineParser(),
-  transformStream2,
-  // new LineTransformer(myfunc),
-  createWriteStream('data_result.csv'),
-);
+// pipelinePromise(
+//   createReadStream('data1.csv', { highWaterMark: 100 }),
+//   new LineParser(),
+//   transformStream2,
+//   // new LineTransformer(myfunc),
+//   createWriteStream('data_result.csv'),
+// );
