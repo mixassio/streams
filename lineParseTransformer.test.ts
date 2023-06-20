@@ -100,7 +100,7 @@ describe('common behavior lineParcer', () => {
     readStream.push(null);
     const writeStream = new Write();
     pipelinePromise(readStream, new LineParser(), writeStream).then(() => {
-      console.log('writeStream->>', writeStream.chunks);
+      // console.log('writeStream->>', writeStream.chunks);
       expect(writeStream.chunks.join('')).toBe(
         ['firstfield|secondfield\n', 'thirdfield|fourthfield\n'].join(''),
       );
